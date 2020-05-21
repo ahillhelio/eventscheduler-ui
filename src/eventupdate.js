@@ -47,14 +47,19 @@ class EventUpdate extends React.Component {
                     name="date"
                     type="text"
                     value={this.state.date}
-                    placeholder= "Event Date"
+                    placeholder= "YYYY-MM-DD"
                     onChange={this.handleChange}/>
-                <input
+                <select
                     name="type"
-                    type="text"
+                    // type="text"
                     value={this.state.type}
                     placeholder= "Event Type"
-                    onChange={this.handleChange}/>
+                    onChange={this.handleChange}>
+                    <option value="Meeting">Meeting</option>
+                    <option value="Appointment">Appointment</option>
+                    <option value="Reminder">Reminder</option>
+                </select>
+
                     <input type="submit" value="Edit or Update an Event"/>
                     <input type="button" value="Cancel" onClick={this.props.refresh}/>
             </form>

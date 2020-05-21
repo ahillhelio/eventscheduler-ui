@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import DeleteEvent from './deleteevent';
 import EventForm from './eventschedulerform';
 import EventUpdate from './eventupdate';
+import './App.css'
 
 class EventScheduler extends Component {
     constructor(props){
@@ -15,9 +16,19 @@ class EventScheduler extends Component {
     }
 
     getEvent = () => {
-        fetch(`${process.env.REACT_APP_API_URL}/api/eventscheduler`)
+        fetch(`${process.env.REACT_APP_API_URL}/api/eventscheduler`) 
         .then(response => response.json())
-        .then(data => this.setState( {event : data, isCreate: true } ));
+        .then((data) => {
+            return data.map(event => {
+                if (new Date (event.date) < Date.now()) {
+                    console.log("Calling Style")
+                    event.style = {"color": "lightgrey"};
+                } 
+                return event; 
+            })
+
+        })
+        .then(data => this.setState( {event : data, isCreate: true } ))
     };
 
     deleteEvent = (id) => {
@@ -52,27 +63,30 @@ class EventScheduler extends Component {
     };
 
     render () {
-        const displayEvent = this.state.event.map((event) => {
-            return <div>
-                {event.name} 
-                <br></br>
-                {event.date} 
-                <br></br>
-                {event.type}
-                <br></br>
-                <DeleteEvent event={event}
-                deleteEvent={this.deleteEvent}
-                updateEvent={this.updateEvent}
-                />
-            </div> 
-        })
-
+            const sortedEvents = this.state.event.sort((a, b) => new Date (b.date) - new Date (a.date))
+            const displayEvent = sortedEvents.map((event) => {
+                return <div style = {event.style}>
+                    {event.name} 
+                    <div>
+                    {event.date} 
+                    </div>
+                    {event.type}
+                    <br></br>
+                    <DeleteEvent event={event}
+                    deleteEvent={this.deleteEvent}
+                    updateEvent={this.updateEvent}
+                    />
+                </div> 
+            })
+        
         console.log(this.state.event);
 
         return (
             <>
             <h3>EVENT SCHEDULER</h3>
+            <br></br>
             {this.renderForm()}
+            <br></br>
             {displayEvent}
             </>
         )
